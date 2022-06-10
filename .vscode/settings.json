@@ -1,8 +1,14 @@
 {
   "python.formatting.provider": "black",
-<<<<<<< HEAD
-  "cSpell.words": ["asarray", "binarize", "vectorize"]
-=======
+  "cSpell.words": [
+    "asarray",
+    "basewidth",
+    "binarize",
+    "hsize",
+    "vectorize",
+    "wpercent",
+    "xoffset",
+    "yoffset"
+  ],
   "jupyter.jupyterServerType": "local"
->>>>>>> 2589d675c26f98aa221514de5a90522fb244fa79
 }
