@@ -6,7 +6,7 @@
     {
       "label": "venv",
       "type": "shell",
-      "command": "venv\\Scripts\\Activate.ps1"
+      "command": "& d:/workspace/py/garticio_selenium/venv/Scripts/Activate.ps1"
     }
   ]
 }
