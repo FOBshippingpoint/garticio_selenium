@@ -2,13 +2,17 @@
   "python.formatting.provider": "black",
   "cSpell.words": [
     "asarray",
+    "baseheight",
     "basewidth",
     "binarize",
     "colormath",
+    "hpercent",
     "hsize",
+    "LANCZOS",
     "upscaled",
     "vectorize",
     "wpercent",
+    "wsize",
     "xoffset",
     "yoffset"
   ],
