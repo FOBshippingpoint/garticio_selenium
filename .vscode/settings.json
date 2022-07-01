@@ -9,6 +9,7 @@
     "hpercent",
     "hsize",
     "LANCZOS",
+    "pynput",
     "upscaled",
     "vectorize",
     "wpercent",
