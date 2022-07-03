@@ -1,4 +1,7 @@
 # Gartic.io Selenium Printer
+![GitHub contributors](https://img.shields.io/github/contributors/FOBshippingpoint/garticio_selenium?style=for-the-badge)
+![GitHub](https://img.shields.io/github/license/FOBshippingpoint/garticio_selenium?color=blue&style=for-the-badge)
+![Jupyter](https://img.shields.io/badge/Made%20with-Jupyter%20Notebook-F37626?logo=Jupyter&style=for-the-badge)
 
 A Jupyter Notebook gartic.io drawing assistant.
 
