@@ -4,7 +4,7 @@ A Jupyter Notebook gartic.io drawing assistant.
 
 ## Usage
 
-Initialize project
+Initialize project(for Windows)
 
 ```sh
 git clone https://github.com/FOBshippingpoint/garticio_selenium.git garticio_selenium
