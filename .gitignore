@@ -1,3 +1,6 @@
+# image download from the web
+image.jpg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
