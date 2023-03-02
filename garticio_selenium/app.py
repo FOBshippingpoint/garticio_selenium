@@ -27,6 +27,9 @@ class Gartic:
             child.grid_configure(padx=5, pady=5)
 
         root.protocol("WM_DELETE_WINDOW", self.close)
+
+        # why use lambda _:
+        # bind func should accept parameter "event", so I set _ to omit it.
         root.bind(
             "<<OpenImageSearch>>",
             lambda _: self.set_message("please select target image"),
