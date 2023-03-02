@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from PIL import Image
 from draw import draw_by_color, compute_line, process_img
+from datetime import datetime
 
 EC_CAN_USER_DRAW = EC.presence_of_element_located(
     (By.CSS_SELECTOR, "#hint > div > button")
@@ -33,7 +34,9 @@ class MyWebDriver:
             keyword = self.find_keyword()
             self.open_google_img_search(keyword)
             self.root.event_generate("<<OpenImageSearch>>")
+            print(f"Current time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             with self.save_img_as_tmp() as tmp:
+                print(f"Current time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                 self.root.event_generate("<<StartDraw>>")
                 self.draw_from_tmp_img(tmp)
             self.root.event_generate("<<EndDraw>>")
@@ -73,36 +76,39 @@ class MyWebDriver:
         # switch to google_search window
         self.driver.switch_to.window(self.driver.window_handles[1])
 
-        img = self.wait.until(lambda d: d.find_element(By.CLASS_NAME, "KAlRDb"))
+        while True:
+            img = self.wait.until(lambda d: d.find_element(By.CLASS_NAME, "KAlRDb"))
+            img_src = img.get_attribute("src")
+            try:
+                img_data = requests.get(img_src).content
+                tmp = tempfile.TemporaryFile()
+                tmp.write(img_data)
+                break
+            except:
+                continue
 
-        img_src = img.get_attribute("src")
-        img_data = requests.get(img_src).content
-        tmp = tempfile.TemporaryFile()
-        tmp.write(img_data)
         return tmp
 
     def draw_from_tmp_img(self, tmp):
         if len(self.driver.window_handles) > 1:
             self.driver.close()
         self.switch_to_garticio()
-
         self.wait.until(EC_CAN_USER_DRAW)
 
-        with tmp:
-            with Image.open(tmp) as im:
-                w, h = (200, 116)
-                a, size = process_img(im, w, h)
-                lines = map(compute_line, a)
+        with Image.open(tmp) as im:
+            w, h = (200, 116)
+            a, size = process_img(im, w, h)
+            lines = map(compute_line, a)
 
-                img_width = size[0]
-                xoffset = (w - img_width) / 2 * 800 / w
-                draw_by_color(
-                    driver=self.driver,
-                    lines=lines,
-                    gap=2.5,
-                    xoffset=750 + xoffset,
-                    yoffset=320,
-                )
+            img_width = size[0]
+            xoffset = (w - img_width) / 2 * 800 / w
+            draw_by_color(
+                driver=self.driver,
+                lines=lines,
+                gap=2.5,
+                xoffset=750 + xoffset,
+                yoffset=320,
+            )
 
     def close(self):
         self.driver.quit()

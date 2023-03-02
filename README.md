@@ -6,7 +6,9 @@
 
 <!-- ![garticio\_selenium](https://socialify.git.ci/FOBshippingpoint/garticio_selenium/image?description=1&descriptionEditable=A%20Jupyter%20Notebook%20gartic.io%20drawing%20assistant.&font=Source%20Code%20Pro&language=1&logo=https%3A%2F%2Fgartic.io%2Fstatic%2Fdownload%2Fcharacter.png&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Dark) -->
 
-![screenshot](https://i.imgur.com/Ets3Iwa.png)
+![screenshot1](https://i.imgur.com/Ets3Iwa.png)
+![screenshot2](https://i.imgur.com/8YC48H4.png)
+![gif](./demo.gif)
 
 A gartic.io drawing assistant desktop app.
 
