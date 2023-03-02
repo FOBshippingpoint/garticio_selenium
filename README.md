@@ -10,6 +10,13 @@
 
 A gartic.io drawing assistant desktop app.
 
+## Usage
+
+Download [latest program](https://github.com/FOBshippingpoint/garticio_selenium/releases/tag/Latest).
+
+When it is your turn, the program will open a Google image search page with the specified keyword. You can then select the image you want to draw, and the program will start drawing it (more accurately, printing it).
+
+
 ## Prerequisite
 
 [poetry](https://python-poetry.org/)
