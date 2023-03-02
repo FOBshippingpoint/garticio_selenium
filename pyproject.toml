@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "garticio-selenium"
+version = "0.1.0"
+description = ""
+authors = ["FOBshippingpoint <aulaulql4ql4xj6@gmail.com>"]
+readme = "README.md"
+packages = [{include = "garticio_selenium"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+colormath = "3.0.0"
+numpy = "1.22.4"
+pillow = "9.1.1"
+pynput = "1.7.6"
+selenium = "4.3.0"
+webdriver-manager = "3.7.0"
+pyinstaller = "^5.8.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
