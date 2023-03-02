@@ -55,7 +55,7 @@ class Gartic:
         self.driver.start()
 
     def close(self):
-        root.destroy()
+        self.root.destroy()
         self.close_driver()
 
     def close_driver(self):
@@ -68,6 +68,11 @@ class Gartic:
         self.lbl.configure(text=message)
 
 
-root = tk.Tk()
-Gartic(root)
-root.mainloop()
+def main():
+    root = tk.Tk()
+    Gartic(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()

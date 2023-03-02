@@ -16,7 +16,6 @@ selenium = "4.3.0"
 webdriver-manager = "3.7.0"
 pyinstaller = "^5.8.0"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

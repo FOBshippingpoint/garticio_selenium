@@ -8,7 +8,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from PIL import Image
-from draw import draw_by_color, make_line, process_img
+from draw import draw_by_color, compute_line, process_img
+
+EC_CAN_USER_DRAW = EC.presence_of_element_located(
+    (By.CSS_SELECTOR, "#hint > div > button")
+)
 
 
 class MyWebDriver:
@@ -29,15 +33,11 @@ class MyWebDriver:
             keyword = self.find_keyword()
             self.open_google_img_search(keyword)
             self.root.event_generate("<<OpenImageSearch>>")
-            self.save_img()
-            self.root.event_generate("<<StartDraw>>")
-            self.draw_img()
+            with self.save_img_as_tmp() as tmp:
+                self.root.event_generate("<<StartDraw>>")
+                self.draw_from_tmp_img(tmp)
             self.root.event_generate("<<EndDraw>>")
-            self.wait.until_not(
-                EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "#hint > div > button")
-                )
-            )
+            self.wait.until_not(EC_CAN_USER_DRAW)
 
     def set_username(self, username="印表機"):
         name_input = self.driver.find_element(By.TAG_NAME, "input")
@@ -51,9 +51,8 @@ class MyWebDriver:
 
     def find_keyword(self):
         self.switch_to_garticio()
-        self.wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#hint > div > button"))
-        )
+        self.wait.until(EC_CAN_USER_DRAW)
+        # word contains many divs, so innerText will have \n, need to remove
         word = self.driver.find_element(By.CLASS_NAME, "word")
         words = word.get_attribute("innerText")
         keyword = words.replace("\n", "")
@@ -70,7 +69,7 @@ class MyWebDriver:
         )
         self.driver.execute_script(script)
 
-    def save_img(self):
+    def save_img_as_tmp(self):
         # switch to google_search window
         self.driver.switch_to.window(self.driver.window_handles[1])
 
@@ -78,34 +77,32 @@ class MyWebDriver:
 
         img_src = img.get_attribute("src")
         img_data = requests.get(img_src).content
-        self.tmp = tempfile.TemporaryFile()
-        self.tmp.write(img_data)
-        self.img = Image.open(self.tmp)
+        tmp = tempfile.TemporaryFile()
+        tmp.write(img_data)
+        return tmp
 
-    def draw_img(self):
+    def draw_from_tmp_img(self, tmp):
         if len(self.driver.window_handles) > 1:
             self.driver.close()
         self.switch_to_garticio()
 
-        self.wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "#hint > div > button"))
-        )
+        self.wait.until(EC_CAN_USER_DRAW)
 
-        with self.img as im:
-            w, h = (200, 116)
-            a, size = process_img(im, w, h)
-            lines = map(make_line, a)
+        with tmp:
+            with Image.open(tmp) as im:
+                w, h = (200, 116)
+                a, size = process_img(im, w, h)
+                lines = map(compute_line, a)
 
-            img_width = size[0]
-            xoffset = (w - img_width) / 2 * 800 / w
-            draw_by_color(
-                driver=self.driver,
-                lines=lines,
-                gap=2.5,
-                xoffset=750 + xoffset,
-                yoffset=320,
-            )
-            self.tmp.close()
+                img_width = size[0]
+                xoffset = (w - img_width) / 2 * 800 / w
+                draw_by_color(
+                    driver=self.driver,
+                    lines=lines,
+                    gap=2.5,
+                    xoffset=750 + xoffset,
+                    yoffset=320,
+                )
 
     def close(self):
         self.driver.quit()

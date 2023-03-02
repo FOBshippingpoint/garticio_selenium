@@ -8,8 +8,7 @@ import numpy as np
 import time
 
 
-# 可用顏色
-# RGB
+# Colors available in gartic.io (RGB)
 COLORS = [
     (0, 0, 0),
     (102, 102, 102),
@@ -30,6 +29,7 @@ COLORS = [
     (255, 0, 143),
     (254, 175, 168),
     # gartic.io doesn't display these colors.
+    # thus, user cannot even click these
     # (0, 217, 163),
     # (133, 178, 0),
     # (128, 0, 255),
@@ -71,8 +71,8 @@ def process_img(im, basewidth=200, baseheight=116):
     else:
         im = resize_based_on_height(im, baseheight)
 
-    # transparent image background color to white
-    is_transparency = 'A' in im.getbands()
+    # change transparent image background to white color
+    is_transparency = "A" in im.getbands()
     if is_transparency:
         new_img = Image.new("RGB", im.size, (255, 255, 255))
         new_img.paste(im, mask=im.split()[3])
@@ -86,19 +86,23 @@ def process_img(im, basewidth=200, baseheight=116):
     return a, im.size
 
 
-color_id_map = {}
-
-
-def make_line(a):
+def compute_line(a):
     """1 image row to line"""
     line = []
     start = 0
+    color_id_map = {}
+    # convert each continuous color into 'start', 'end', 'color_id' dict
     for i in range(len(a) - 1):
         if (a[i] != a[i + 1]).all():
             end = i
 
             min_color_id = None
-            if tuple(a[i]) not in color_id_map:
+            color_key = tuple(a[i])
+            color_already_cached = color_key in color_id_map
+            if color_already_cached:
+                min_color_id = color_id_map[color_key]
+            else:
+                # find the closest color in COLORS
                 for j in range(len(COLORS)):
                     delta = color_diff(a[i], COLORS[j])
                     if min_color_id is None:
@@ -108,15 +112,17 @@ def make_line(a):
                         if delta < min_delta:
                             min_color_id = j
                             min_delta = delta
-                color_id_map[tuple(a[i])] = min_color_id
-            else:
-                min_color_id = color_id_map[tuple(a[i])]
 
+                color_id_map[color_key] = min_color_id
+
+            # actually, I don't know what 3 means
             color_not_white = min_color_id != 3
-            if color_not_white:  # white
-                line += [{'start': start, 'end': end, 'color_id': min_color_id}]
+            if color_not_white:
+                seg = {"start": start, "end": end, "color_id": min_color_id}
+                line.append(seg)
             # next
             start = i + 1
+
     return line
 
 
@@ -137,24 +143,27 @@ def draw_by_color(driver, lines, xoffset=10, yoffset=10, gap=1, line_height=None
     color_map = {}
     for y, line in enumerate(lines):
         for seg in line:
-            seg['y'] = y
-            if seg['color_id'] not in color_map:
-                color_map[seg['color_id']] = [seg]
+            seg["y"] = y
+            if seg["color_id"] not in color_map:
+                color_map[seg["color_id"]] = [seg]
             else:
-                color_map[seg['color_id']] += [seg]
+                color_map[seg["color_id"]] += [seg]
 
     mouse = MouseController()
     color_elem_map = get_color_elems(driver)
     for color_id, color_line in color_map.items():
         color_elem_map[color_id].click()
         for seg in color_line:
-            mouse.position = (xoffset + seg['start'] * gap, yoffset + seg['y'] * line_height)
+            mouse.position = (
+                xoffset + seg["start"] * gap,
+                yoffset + seg["y"] * line_height,
+            )
 
-            if seg['start'] == seg['end']:
+            if seg["start"] == seg["end"]:
                 mouse.click(Button.left)
             else:
                 mouse.press(Button.left)
                 # time.sleep(0.005)
-                mouse.move((seg['end'] - seg['start']) * gap, 0)
+                mouse.move((seg["end"] - seg["start"]) * gap, 0)
                 time.sleep(0.0001)
                 mouse.release(Button.left)
