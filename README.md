@@ -1,5 +1,7 @@
 # Gartic.io Selenium Printer
 
+[中文說明](https://github.com/FOBshippingpoint/garticio_selenium/blob/main/README_zh-TW.md)
+
 ![GitHub contributors](https://img.shields.io/github/contributors/FOBshippingpoint/garticio_selenium?style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/FOBshippingpoint/garticio_selenium?color=blue&style=for-the-badge)
 
