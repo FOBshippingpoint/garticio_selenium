@@ -105,9 +105,9 @@ def draw_by_color(driver, lines, xoffset, yoffset, x_gap, y_gap=None):
                 mouse.click(Button.left)
             else:
                 mouse.press(Button.left)
-                time.sleep(0.0001)
+                time.sleep(0.001)
                 mouse.move((seg["end"] - seg["start"]) * x_gap, 0)
-                time.sleep(0.0001)
+                time.sleep(0.001)
                 mouse.release(Button.left)
 
 

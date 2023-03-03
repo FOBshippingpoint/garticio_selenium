@@ -23,6 +23,7 @@ class MyWebDriver:
         options.add_extension("uBlock-Origin.crx")
         options.add_argument("--start-maximized")
 
+        self.suffix = ""
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         self.wait = WebDriverWait(self.driver, timeout=999999)
         self.root = root
@@ -65,15 +66,16 @@ class MyWebDriver:
 
         return keyword
 
-    def open_google_img_search(self, keyword, suffix=""):
-        if suffix == "":
-            query = keyword
-        else:
-            query = keyword + "+" + suffix
+    def open_google_img_search(self, keyword):
+        query = keyword + "+" + self.suffix
         script = (
             f"window.open('https://www.google.com/search?q={query}&tbm=isch&hl=zh-TW');"
         )
         self.driver.execute_script(script)
+        
+    def set_suffix(self, suffix):
+        self.suffix = suffix
+        print(suffix)
 
     def save_img_as_tmp(self):
         # switch to google_search window
