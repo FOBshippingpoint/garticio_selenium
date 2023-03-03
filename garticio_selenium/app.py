@@ -22,6 +22,15 @@ class Gartic:
         self.btn.grid(column=1, row=1, sticky=tk.W)
         self.lbl = ttk.Label(mainframe, text="")
         self.lbl.grid(column=1, row=2, sticky=tk.W)
+        
+        #建立搜尋用的suffix
+        searchStr = tk.StringVar()   # 建立文字變數
+        searchStr.set('')
+        self.entry = ttk.Entry(mainframe, textvariable=searchStr)   #輸入欄位
+        self.entry.insert(1, '請輸入預設字')
+        self.entry.grid(column=2, row=1, sticky=tk.W)
+        self.statuslbl = ttk.Label(mainframe, textvariable=searchStr)   #結果顯示
+        self.statuslbl.grid(column=2, row=2, sticky=tk.W)
 
         for child in mainframe.winfo_children():
             child.grid_configure(padx=5, pady=5)
