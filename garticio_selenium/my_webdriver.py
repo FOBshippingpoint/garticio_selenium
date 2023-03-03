@@ -1,4 +1,5 @@
 import tempfile
+import time
 import requests
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
@@ -21,9 +22,9 @@ class MyWebDriver:
         options = Options()
         options.add_extension("uBlock-Origin.crx")
         options.add_argument("--start-maximized")
+
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         self.wait = WebDriverWait(self.driver, timeout=999999)
-
         self.root = root
 
     def start(self):
@@ -34,12 +35,14 @@ class MyWebDriver:
             keyword = self.find_keyword()
             self.open_google_img_search(keyword)
             self.root.event_generate("<<OpenImageSearch>>")
-            print(f"Current time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             with self.save_img_as_tmp() as tmp:
-                print(f"Current time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                 self.root.event_generate("<<StartDraw>>")
-                self.draw_from_tmp_img(tmp)
-            self.root.event_generate("<<EndDraw>>")
+                result = self.draw_from_tmp_img(tmp)
+                if result == "complete":
+                    self.root.event_generate("<<EndDraw>>")
+                elif result == "interrupt":
+                    self.root.event_generate("<<DrawInterrupt>>")
+                    time.sleep(2)
             self.wait.until_not(EC_CAN_USER_DRAW)
 
     def set_username(self, username="印表機"):
@@ -85,11 +88,14 @@ class MyWebDriver:
                 tmp.write(img_data)
                 break
             except:
+                self.root.event_generate("<<ImageFetchError>>")
                 continue
 
         return tmp
 
     def draw_from_tmp_img(self, tmp):
+        # if the broswer tabs is greater than 1, we need to close google search page
+        # still had space to improve these lines
         if len(self.driver.window_handles) > 1:
             self.driver.close()
         self.switch_to_garticio()
@@ -97,18 +103,23 @@ class MyWebDriver:
 
         with Image.open(tmp) as im:
             w, h = (200, 116)
-            a, size = process_img(im, w, h)
-            lines = map(compute_line, a)
+            img_arr, size = process_img(im, w, h)
+            lines = map(compute_line, img_arr)
 
             img_width = size[0]
-            xoffset = (w - img_width) / 2 * 800 / w
-            draw_by_color(
-                driver=self.driver,
-                lines=lines,
-                gap=2.5,
-                xoffset=750 + xoffset,
-                yoffset=320,
-            )
+            xoffset = (w - img_width) / 2 * 800 / w + 750
+            try:
+                draw_by_color(
+                    driver=self.driver,
+                    lines=lines,
+                    xoffset=xoffset,
+                    yoffset=320,
+                    x_gap=2.5,
+                )
+            except:
+                return "interrupt"
+
+        return "complete"
 
     def close(self):
         self.driver.quit()
