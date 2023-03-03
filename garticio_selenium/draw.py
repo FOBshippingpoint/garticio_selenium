@@ -43,8 +43,8 @@ def process_img(im, basewidth, baseheight):
     im = im.quantize(colors=16)
     im = im.convert("RGB")
     im = im.filter(ImageFilter.MedianFilter(size=3))
-    a = np.asarray(im)
-    return a, im.size
+    img_arr = np.asarray(im)
+    return img_arr, im.size
 
 
 def is_close_to_white(color, threshold=70):
@@ -105,9 +105,9 @@ def draw_by_color(driver, lines, xoffset, yoffset, x_gap, y_gap=None):
                 mouse.click(Button.left)
             else:
                 mouse.press(Button.left)
-                time.sleep(0.001)
+                time.sleep(0.00001)
                 mouse.move((seg["end"] - seg["start"]) * x_gap, 0)
-                time.sleep(0.001)
+                time.sleep(0.00001)
                 mouse.release(Button.left)
 
 

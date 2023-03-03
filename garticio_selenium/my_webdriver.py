@@ -1,3 +1,4 @@
+from collections import defaultdict
 import tempfile
 import time
 import requests
@@ -15,6 +16,7 @@ from datetime import datetime
 EC_CAN_USER_DRAW = EC.presence_of_element_located(
     (By.CSS_SELECTOR, "#hint > div > button")
 )
+GARTIC_IO_URL = "https://gartic.io"
 
 
 class MyWebDriver:
@@ -25,16 +27,27 @@ class MyWebDriver:
 
         self.suffix = ""
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+        self.named_windows = defaultdict()
         self.wait = WebDriverWait(self.driver, timeout=999999)
         self.root = root
+        print(self.driver.get_window_rect())
+
+    def set_cur_window_with_name(self, name):
+        self.named_windows[name] = self.driver.current_window_handle
+
+    def switch_to_named_window(self, name):
+        window = self.named_windows[name]
+        self.driver.switch_to.window(window)
 
     def start(self):
-        self.driver.get("https://gartic.io/")
+        self.driver.get(GARTIC_IO_URL)
+        self.set_cur_window_with_name("garticio")
         self.set_username()
+        print(self.driver.get_window_rect())
         while True:
             self.root.event_generate("<<Waiting>>")
-            keyword = self.find_keyword()
-            self.open_google_img_search(keyword)
+            answer = self.find_answer()
+            self.open_google_img_search(answer)
             self.root.event_generate("<<OpenImageSearch>>")
             with self.save_img_as_tmp() as tmp:
                 self.root.event_generate("<<StartDraw>>")
@@ -52,34 +65,27 @@ class MyWebDriver:
         name_input.send_keys(Keys.CONTROL, "a")
         name_input.send_keys(username)
 
-    def switch_to_garticio(self):
-        gartic_window = self.driver.window_handles[0]
-        self.driver.switch_to.window(gartic_window)
-
-    def find_keyword(self):
-        self.switch_to_garticio()
+    def find_answer(self):
+        self.switch_to_named_window("garticio")
         self.wait.until(EC_CAN_USER_DRAW)
         # word contains many divs, so innerText will have \n, need to remove
         word = self.driver.find_element(By.CLASS_NAME, "word")
         words = word.get_attribute("innerText")
-        keyword = words.replace("\n", "")
+        answer = words.replace("\n", "")
 
-        return keyword
+        return answer
 
-    def open_google_img_search(self, keyword):
-        query = keyword + "+" + self.suffix
-        script = (
-            f"window.open('https://www.google.com/search?q={query}&tbm=isch&hl=zh-TW');"
-        )
-        self.driver.execute_script(script)
-        
+    def open_google_img_search(self, answer):
+        query = answer + "+" + self.suffix
+        self.driver.switch_to.new_window("tab")
+        self.driver.get(f"https://www.google.com/search?q={query}&tbm=isch&hl=zh-TW")
+        self.set_cur_window_with_name("google_image_search")
+
     def set_suffix(self, suffix):
         self.suffix = suffix
-        print(suffix)
 
     def save_img_as_tmp(self):
-        # switch to google_search window
-        self.driver.switch_to.window(self.driver.window_handles[1])
+        self.switch_to_named_window('google_image_search')
 
         while True:
             img = self.wait.until(lambda d: d.find_element(By.CLASS_NAME, "KAlRDb"))
@@ -88,6 +94,8 @@ class MyWebDriver:
                 img_data = requests.get(img_src).content
                 tmp = tempfile.TemporaryFile()
                 tmp.write(img_data)
+                self.switch_to_named_window('google_image_search')
+                self.driver.close()
                 break
             except:
                 self.root.event_generate("<<ImageFetchError>>")
@@ -96,11 +104,7 @@ class MyWebDriver:
         return tmp
 
     def draw_from_tmp_img(self, tmp):
-        # if the broswer tabs is greater than 1, we need to close google search page
-        # still had space to improve these lines
-        if len(self.driver.window_handles) > 1:
-            self.driver.close()
-        self.switch_to_garticio()
+        self.switch_to_named_window("garticio")
         self.wait.until(EC_CAN_USER_DRAW)
 
         with Image.open(tmp) as im:
