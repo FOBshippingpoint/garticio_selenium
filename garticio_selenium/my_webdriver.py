@@ -25,12 +25,20 @@ GARTIC_IO_URL = "https://gartic.io"
 
 
 class MyWebDriver:
-    def __init__(self, root):
+    def __init__(self, root, suffix, color_num, zoom, sleep_ms):
+        # suffix: google image search suffix string
+        self.suffix = suffix
+        # color_num: number of colors to quantize
+        self.color_num = color_num
+        # zoom: image size in percentage
+        self.zoom = zoom
+        # sleep_ms: next stroke sleep time in ms
+        self.sleep_ms = sleep_ms
+
         options = Options()
         options.add_extension("uBlock-Origin.crx")
         options.add_argument("--start-maximized")
 
-        self.suffix = ""
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         self.named_windows = defaultdict()
         self.wait = WebDriverWait(self.driver, timeout=999999)
@@ -87,9 +95,6 @@ class MyWebDriver:
         self.driver.get(f"https://www.google.com/search?q={query}&tbm=isch&hl=zh-TW")
         self.set_cur_window_with_name("google_image_search")
 
-    def set_suffix(self, suffix):
-        self.suffix = suffix
-
     def save_img_as_tmp(self):
         self.switch_to_named_window("google_image_search")
 
@@ -115,14 +120,15 @@ class MyWebDriver:
         self.wait.until(EC_CAN_USER_DRAW)
 
         gap = 2.5
-        zoom = 0.5
         canvas_rect = self.compute_canvas_rect()
 
+        zoom = self.zoom / 100
         with Image.open(tmp) as im:
             img_arr, (img_width, img_height) = process_img(
                 im,
                 basewidth=int(canvas_rect["width"] / gap * zoom),
                 baseheight=int(canvas_rect["height"] / gap * zoom),
+                quantize_color_num=self.color_num
             )
             xoffset = int(
                 canvas_rect["x"] + (canvas_rect["width"] - img_width * gap) / 2
@@ -199,11 +205,12 @@ class MyWebDriver:
                         mouse.click(Button.left)
                     else:
                         mouse.press(Button.left)
-                        time.sleep(0.00001)
+                        time.sleep(self.sleep_ms / 1000)
                         mouse.move((seg["end"] - seg["start"]) * gap, 0)
-                        time.sleep(0.00001)
+                        time.sleep(self.sleep_ms / 1000)
                         mouse.release(Button.left)
 
+        self.listener.stop()
         return "complete"
 
     def change_brush_color(self, color_selector, hex_color):

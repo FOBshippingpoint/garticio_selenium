@@ -277,36 +277,6 @@ test-randomorder = ["pytest-randomly"]
 tox = ["tox"]
 
 [[package]]
-name = "customtkinter"
-version = "5.1.2"
-description = "Create modern looking GUIs with Python"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "customtkinter-5.1.2-py3-none-any.whl", hash = "sha256:30fe0d40f0b43b60177e87013e932377a3ae8bf46921528488ae1adbb0aeafdf"},
-    {file = "customtkinter-5.1.2.tar.gz", hash = "sha256:eedaa11edce76b6882a605864a11b4859643ba0f4f456841aad51d89a758d32c"},
-]
-
-[package.dependencies]
-darkdetect = "*"
-
-[[package]]
-name = "darkdetect"
-version = "0.8.0"
-description = "Detect OS Dark Mode from Python"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "darkdetect-0.8.0-py3-none-any.whl", hash = "sha256:a7509ccf517eaad92b31c214f593dbcf138ea8a43b2935406bbd565e15527a85"},
-    {file = "darkdetect-0.8.0.tar.gz", hash = "sha256:b5428e1170263eb5dea44c25dc3895edd75e6f52300986353cd63533fe7df8b1"},
-]
-
-[package.extras]
-macos-listener = ["pyobjc-framework-Cocoa"]
-
-[[package]]
 name = "evdev"
 version = "1.6.1"
 description = "Bindings to the Linux input handling subsystem"
@@ -953,4 +923,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "23de3bb431dcd337bba9c726f9bb01805629481bccbd759be2edddc261dec641"
+content-hash = "4c2f2e591e908c8aa065356eccef638f0ae4a4160b465eb8e397745e2c61ee66"

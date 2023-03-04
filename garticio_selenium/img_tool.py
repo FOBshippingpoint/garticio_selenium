@@ -18,7 +18,7 @@ def resize_based_on_height(im, baseheight):
     return im
 
 
-def process_img(im, basewidth, baseheight):
+def process_img(im, basewidth, baseheight, quantize_color_num):
     if im.size[0] / im.size[1] > 815 / 475:
         im = resize_based_on_width(im, basewidth)
     else:
@@ -34,7 +34,7 @@ def process_img(im, basewidth, baseheight):
 
     # simplify the image
     im = im.convert("RGB")
-    im = im.quantize(colors=16)
+    im = im.quantize(quantize_color_num)
     im = im.convert("RGB")
     im = im.filter(ImageFilter.MedianFilter(size=3))
     img_arr = np.asarray(im)
