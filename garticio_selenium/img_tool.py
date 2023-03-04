@@ -1,11 +1,5 @@
 from PIL import Image, ImageFilter
-from pynput.mouse import Button, Controller as MouseController
-from selenium.webdriver.common.by import By
 import numpy as np
-import time
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from collections import defaultdict
 
 
 def resize_based_on_width(im, basewidth):
@@ -78,48 +72,3 @@ def compute_line(img_row):
             start = i + 1
 
     return line
-
-
-def draw_by_color(driver, lines, xoffset, yoffset, x_gap, y_gap=None):
-    if y_gap is None:
-        y_gap = x_gap
-
-    color_map = defaultdict(list)
-    for y, line in enumerate(lines):
-        for seg in line:
-            seg["y"] = y
-            color_map[seg["hex_color"]].append(seg)
-
-    mouse = MouseController()
-    color_selector = driver.find_element(By.ID, "colorsRange")
-    for hex_color, line in color_map.items():
-        change_brush_color(driver, color_selector, hex_color)
-
-        for seg in line:
-            mouse.position = (
-                xoffset + seg["start"] * x_gap,
-                yoffset + seg["y"] * y_gap,
-            )
-
-            if seg["start"] == seg["end"]:
-                mouse.click(Button.left)
-            else:
-                mouse.press(Button.left)
-                time.sleep(0.00001)
-                mouse.move((seg["end"] - seg["start"]) * x_gap, 0)
-                time.sleep(0.00001)
-                mouse.release(Button.left)
-
-
-def change_brush_color(driver, color_selector, hex_color):
-    color_selector.click()
-    action = ActionChains(driver)
-    action.key_down(Keys.SHIFT)
-    action.send_keys(Keys.TAB)
-    action.key_up(Keys.SHIFT)
-    action.send_keys(Keys.UP)
-    action.key_down(Keys.SHIFT)
-    action.send_keys(Keys.TAB)
-    action.key_up(Keys.SHIFT)
-    action.send_keys(hex_color)
-    action.send_keys(Keys.ENTER).perform()

@@ -12,28 +12,22 @@ class Gartic:
         root.minsize(250, 100)
 
         mainframe = ttk.Frame(root, padding="3 3 12 12")
-        mainframe.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
-        root.columnconfigure(0, weight=1)
-        root.rowconfigure(0, weight=1)
-        root.focus_set()
+        mainframe.grid(column=0, row=0, sticky="nsew")
+        root.rowconfigure(3, weight=1)
 
         self.btn = ttk.Button(
             mainframe, text="Open Browser", command=self.run_driver_thread
         )
-        self.btn.grid(column=1, row=1, sticky=tk.W)
+        self.btn.grid(column=0, row=0)
         self.btn.focus_set()
-        self.lbl = ttk.Label(mainframe, text="")
-        self.lbl.grid(column=1, row=2, sticky=tk.W)
-
         self.search_suffix = tk.StringVar()
         self.search_suffix.set("")
         self.search_suffix.trace_add("write", self.on_entry_change)
-        self.search_suffix_entry = ttk.Entry(
-            mainframe, textvariable=self.search_suffix
-        ) 
-        self.search_suffix_entry.grid(column=2, row=1, sticky=tk.W)
-        self.status_lbl = ttk.Label(mainframe, textvariable=self.search_suffix)
-        self.status_lbl.grid(column=2, row=2, sticky=tk.W)
+        self.search_suffix_entry = ttk.Entry(mainframe, textvariable=self.search_suffix)
+        self.search_suffix_entry.grid(column=0, row=1)
+
+        self.lbl = ttk.Label(mainframe, text="")
+        self.lbl.grid(column=0, row=2)
 
         for child in mainframe.winfo_children():
             child.grid_configure(padx=5, pady=5)
@@ -45,11 +39,19 @@ class Gartic:
             "<<OpenImageSearch>>",
             lambda _: self.set_message("please select target image."),
         )
-        root.bind("<<StartDraw>>", lambda _: self.set_message("start printing."))
-        root.bind("<<EndDraw>>", lambda _: self.set_message("print complete."))
+        root.bind("<<StartPrint>>", lambda _: self.set_message("start printing."))
+        root.bind("<<EndPrint>>", lambda _: self.set_message("print complete."))
         root.bind(
-            "<<DrawInterrupt>>",
+            "<<Time'sUp>>",
             lambda _: self.set_message("time's up. interrupt printing."),
+        )
+        root.bind(
+            "<<UserPause>>",
+            lambda _: self.set_message("pause printing."),
+        )
+        root.bind(
+            "<<UserStop>>",
+            lambda _: self.set_message("stop printing."),
         )
         root.bind("<<Waiting>>", lambda _: self.set_message("waiting for your turn."))
         root.bind(

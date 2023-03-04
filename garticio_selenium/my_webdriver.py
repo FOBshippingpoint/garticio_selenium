@@ -3,6 +3,7 @@ import tempfile
 from threading import Thread
 import time
 import requests
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
@@ -11,9 +12,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from PIL import Image
-from draw import draw_by_color, compute_line, process_img
+from img_tool import compute_line, process_img
 from datetime import datetime
-from pynput.mouse import Controller
+from pynput.mouse import Button, Controller
+from pynput import keyboard
+from collections import defaultdict
 
 EC_CAN_USER_DRAW = EC.presence_of_element_located(
     (By.CSS_SELECTOR, "#hint > div > button")
@@ -51,13 +54,15 @@ class MyWebDriver:
             self.open_google_img_search(answer)
             self.root.event_generate("<<OpenImageSearch>>")
             with self.save_img_as_tmp() as tmp:
-                self.root.event_generate("<<StartDraw>>")
+                self.root.event_generate("<<StartPrint>>")
                 result = self.draw_from_tmp_img(tmp)
                 if result == "complete":
-                    self.root.event_generate("<<EndDraw>>")
-                elif result == "interrupt":
-                    self.root.event_generate("<<DrawInterrupt>>")
+                    self.root.event_generate("<<EndPrint>>")
+                elif result == "time's_up":
+                    self.root.event_generate("<<Time'sUp>>")
                     time.sleep(2)
+                elif result == "user_stop":
+                    self.root.event_generate("<<UserStop>>")
             self.wait.until_not(EC_CAN_USER_DRAW)
 
     def set_username(self, username="印表機"):
@@ -98,7 +103,8 @@ class MyWebDriver:
                 self.switch_to_named_window("google_image_search")
                 self.driver.close()
                 break
-            except:
+            except Exception as e:
+                print(e)
                 self.root.event_generate("<<ImageFetchError>>")
                 continue
 
@@ -108,42 +114,29 @@ class MyWebDriver:
         self.switch_to_named_window("garticio")
         self.wait.until(EC_CAN_USER_DRAW)
 
-        x_gap = 2.5
-        y_gap = 2.5
+        gap = 2.5
         zoom = 0.5
         canvas_rect = self.compute_canvas_rect()
 
         with Image.open(tmp) as im:
             img_arr, (img_width, img_height) = process_img(
                 im,
-                basewidth=int(canvas_rect["width"] / x_gap * zoom),
-                baseheight=int(canvas_rect["height"] / y_gap * zoom),
+                basewidth=int(canvas_rect["width"] / gap * zoom),
+                baseheight=int(canvas_rect["height"] / gap * zoom),
             )
             xoffset = int(
-                canvas_rect["x"] + (canvas_rect["width"] - img_width * x_gap) / 2
+                canvas_rect["x"] + (canvas_rect["width"] - img_width * gap) / 2
             )
             yoffset = int(
-                canvas_rect["y"] + (canvas_rect["height"] - img_height * y_gap) / 2
+                canvas_rect["y"] + (canvas_rect["height"] - img_height * gap) / 2
             )
 
             lines = map(compute_line, img_arr)
 
-            try:
-                draw_by_color(
-                    driver=self.driver,
-                    lines=lines,
-                    xoffset=xoffset,
-                    yoffset=yoffset,
-                    x_gap=x_gap,
-                    y_gap=y_gap,
-                )
-            except:
-                return "interrupt"
-
-        return "complete"
-
-    def close(self):
-        self.driver.quit()
+            result = self.print_lines(
+                lines=lines, xoffset=xoffset, yoffset=yoffset, gap=gap
+            )
+            return result
 
     def compute_canvas_rect(self):
         canvas = self.driver.find_element(By.ID, "drawing")
@@ -165,3 +158,73 @@ class MyWebDriver:
         }
 
         return canvas_rect
+
+    def print_lines(self, lines, xoffset, yoffset, gap):
+        color_map = defaultdict(list)
+        for y, line in enumerate(lines):
+            for seg in line:
+                seg["y"] = y
+                color_map[seg["hex_color"]].append(seg)
+
+        mouse = Controller()
+        color_selector = self.driver.find_element(By.ID, "colorsRange")
+
+        self.stop = False
+        self.pause = False
+
+        self.listener = keyboard.Listener(on_press=self.on_press_stop, suppress=True)
+        self.listener.start()
+
+        for hex_color, line in color_map.items():
+            try:
+                self.change_brush_color(color_selector, hex_color)
+            except:
+                return "time's_up"
+            for seg in line:
+                if self.stop:
+                    return "user_stop"
+                elif self.pause:
+                    self.root.event_generate("<<UserPause>>")
+                    while self.pause:
+                        pass
+                    self.root.event_generate("<<StartPrint>>")
+                else:
+                    mouse.position = (
+                        xoffset + seg["start"] * gap,
+                        yoffset + seg["y"] * gap,
+                    )
+
+                    is_dot = seg["start"] == seg["end"]
+                    if is_dot:
+                        mouse.click(Button.left)
+                    else:
+                        mouse.press(Button.left)
+                        time.sleep(0.00001)
+                        mouse.move((seg["end"] - seg["start"]) * gap, 0)
+                        time.sleep(0.00001)
+                        mouse.release(Button.left)
+
+        return "complete"
+
+    def change_brush_color(self, color_selector, hex_color):
+        color_selector.click()
+        action = ActionChains(self.driver)
+        action.key_down(Keys.SHIFT)
+        action.send_keys(Keys.TAB)
+        action.key_up(Keys.SHIFT)
+        action.send_keys(Keys.UP)
+        action.key_down(Keys.SHIFT)
+        action.send_keys(Keys.TAB)
+        action.key_up(Keys.SHIFT)
+        action.send_keys(hex_color)
+        action.send_keys(Keys.ENTER).perform()
+
+    def close(self):
+        self.driver.quit()
+
+    def on_press_stop(self, key):
+        if key == keyboard.Key.f3:
+            self.pause = not self.pause
+        elif key == keyboard.Key.f4:
+            self.listener.stop()
+            self.stop = True
