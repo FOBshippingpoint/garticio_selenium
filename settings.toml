@@ -1,0 +1,22 @@
+# gartic printer settings
+
+[control]
+
+[control.rule]
+color_num = { from = 1, to = 32 }
+zoom = { from = 10, to = 100}
+sleep_ms = { from = 0.01,  to = 100}
+
+
+[control.default]
+suffix = "" # google image search suffix
+color_num = 16 # color numbers
+zoom = 80 # percentage
+sleep_ms = 0.01 # sleep time in ms for each line segment
+
+[preferences]
+language = ""
+available_languages = { en_US = 'English', zh_TW = '正體中文' }
+
+[help]
+online_user_manual ='https://github.com/FOBshippingpoint/garticio_selenium#readme'

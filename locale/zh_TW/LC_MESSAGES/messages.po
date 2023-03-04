@@ -1,0 +1,126 @@
+# Chinese (Traditional, Taiwan) translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-03-05 05:28+0800\n"
+"PO-Revision-Date: 2023-03-05 02:21+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hant_TW\n"
+"Language-Team: zh_Hant_TW <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: garticio_selenium/app.py:44
+msgid "Gartic Printer"
+msgstr "Gartic 印表機"
+
+#: garticio_selenium/app.py:53
+msgid "Preferences"
+msgstr "喜好設定"
+
+#: garticio_selenium/app.py:54
+msgid "Help"
+msgstr "幫助"
+
+#: garticio_selenium/app.py:57
+msgid "Save current settings"
+msgstr "儲存目前參數"
+
+#: garticio_selenium/app.py:61
+msgid "Languages"
+msgstr "語言"
+
+#: garticio_selenium/app.py:70
+msgid "Online User Manual"
+msgstr "線上使用手冊"
+
+#: garticio_selenium/app.py:74
+msgid "About"
+msgstr "關於"
+
+#: garticio_selenium/app.py:143 garticio_selenium/app.py:204
+msgid "Open Browser"
+msgstr "開啟傀儡瀏覽器"
+
+#: garticio_selenium/app.py:152
+msgid "Search suffix"
+msgstr "圖片搜尋後綴"
+
+#: garticio_selenium/app.py:153
+msgid "Colors"
+msgstr "顏色數"
+
+#: garticio_selenium/app.py:154
+msgid "Zoom"
+msgstr "圖片大小"
+
+#: garticio_selenium/app.py:155
+msgid "Sleep ms"
+msgstr "下筆休眠時間"
+
+#: garticio_selenium/app.py:165
+msgid "please select target image."
+msgstr "請點選要畫的圖片"
+
+#: garticio_selenium/app.py:169
+msgid "start printing. F3: pause/resume, F4: stop"
+msgstr "開始列印。F3：暫停/繼續；F4：停止"
+
+#: garticio_selenium/app.py:171
+msgid "print complete."
+msgstr "列印完成"
+
+#: garticio_selenium/app.py:174
+msgid "time's up. interrupt printing."
+msgstr "時限到，自動中斷"
+
+#: garticio_selenium/app.py:178
+msgid "pause printing."
+msgstr "暫停列印"
+
+#: garticio_selenium/app.py:182
+msgid "stop printing."
+msgstr "停止列印"
+
+#: garticio_selenium/app.py:184
+msgid "waiting for your turn."
+msgstr "等待您的回合"
+
+#: garticio_selenium/app.py:188
+msgid "error while fetching image, please try again."
+msgstr "下載圖片時發生錯誤，請再試一次"
+
+#: garticio_selenium/app.py:193
+msgid ""
+"Authors: CC Lan, Felian 1999, Elmer Chou\n"
+"License: MIT\n"
+"Home page: https://github.com/FOBshippingpoint/garticio_selenium"
+msgstr ""
+"作者：CC Lan, Felian 1999, Elmer Chou\n"
+"授權：MIT\n"
+"網站：https://github.com/FOBshippingpoint/garticio_selenium"
+
+#: garticio_selenium/app.py:206
+msgid "Close Browser"
+msgstr "關閉傀儡瀏覽器"
+
+#: garticio_selenium/app.py:207
+msgid "starting browser."
+msgstr "正在開啟傀儡瀏覽器"
+
+#: garticio_selenium/app.py:281
+msgid "Please restart the program to apply language settings."
+msgstr "請重新啟動程式以套用語言"
+
+#: garticio_selenium/my_webdriver.py:80
+msgid "printer"
+msgstr "印表機"
+

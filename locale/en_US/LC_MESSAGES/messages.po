@@ -1,0 +1,126 @@
+# English (United States) translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-03-05 05:28+0800\n"
+"PO-Revision-Date: 2023-03-05 02:21+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en_US\n"
+"Language-Team: en_US <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: garticio_selenium/app.py:44
+msgid "Gartic Printer"
+msgstr "Gartic Printer"
+
+#: garticio_selenium/app.py:53
+msgid "Preferences"
+msgstr "Preferences"
+
+#: garticio_selenium/app.py:54
+msgid "Help"
+msgstr "Help"
+
+#: garticio_selenium/app.py:57
+msgid "Save current settings"
+msgstr "Save current settings"
+
+#: garticio_selenium/app.py:61
+msgid "Languages"
+msgstr "Languages"
+
+#: garticio_selenium/app.py:70
+msgid "Online User Manual"
+msgstr "Online User Manual"
+
+#: garticio_selenium/app.py:74
+msgid "About"
+msgstr "About"
+
+#: garticio_selenium/app.py:143 garticio_selenium/app.py:204
+msgid "Open Browser"
+msgstr "Open Browser"
+
+#: garticio_selenium/app.py:152
+msgid "Search suffix"
+msgstr "Search suffix"
+
+#: garticio_selenium/app.py:153
+msgid "Colors"
+msgstr "Colors"
+
+#: garticio_selenium/app.py:154
+msgid "Zoom"
+msgstr "Zoom"
+
+#: garticio_selenium/app.py:155
+msgid "Sleep ms"
+msgstr "Sleep ms"
+
+#: garticio_selenium/app.py:165
+msgid "please select target image."
+msgstr "please select target image."
+
+#: garticio_selenium/app.py:169
+msgid "start printing. F3: pause/resume, F4: stop"
+msgstr "start printing. F3: pause/resume, F4: stop"
+
+#: garticio_selenium/app.py:171
+msgid "print complete."
+msgstr "print complete."
+
+#: garticio_selenium/app.py:174
+msgid "time's up. interrupt printing."
+msgstr "time's up. interrupt printing."
+
+#: garticio_selenium/app.py:178
+msgid "pause printing."
+msgstr "pause printing."
+
+#: garticio_selenium/app.py:182
+msgid "stop printing."
+msgstr "stop printing."
+
+#: garticio_selenium/app.py:184
+msgid "waiting for your turn."
+msgstr "waiting for your turn."
+
+#: garticio_selenium/app.py:188
+msgid "error while fetching image, please try again."
+msgstr "error while fetching image, please try again."
+
+#: garticio_selenium/app.py:193
+msgid ""
+"Authors: CC Lan, Felian 1999, Elmer Chou\n"
+"License: MIT\n"
+"Home page: https://github.com/FOBshippingpoint/garticio_selenium"
+msgstr ""
+"Authors: CC Lan, Felian 1999, Elmer Chou\n"
+"License: MIT\n"
+"Home page: https://github.com/FOBshippingpoint/garticio_selenium"
+
+#: garticio_selenium/app.py:206
+msgid "Close Browser"
+msgstr "Close Browser"
+
+#: garticio_selenium/app.py:207
+msgid "starting browser."
+msgstr "starting browser."
+
+#: garticio_selenium/app.py:281
+msgid "Please restart the program to apply language settings."
+msgstr "Please restart the program to apply language settings."
+
+#: garticio_selenium/my_webdriver.py:80
+msgid "printer"
+msgstr "printer"
+

@@ -17,6 +17,10 @@ from datetime import datetime
 from pynput.mouse import Button, Controller
 from pynput import keyboard
 from collections import defaultdict
+import gettext
+
+_ = gettext.gettext
+
 
 EC_CAN_USER_DRAW = EC.presence_of_element_located(
     (By.CSS_SELECTOR, "#hint > div > button")
@@ -73,7 +77,7 @@ class MyWebDriver:
                     self.root.event_generate("<<UserStop>>")
             self.wait.until_not(EC_CAN_USER_DRAW)
 
-    def set_username(self, username="印表機"):
+    def set_username(self, username=_("printer")):
         name_input = self.driver.find_element(By.TAG_NAME, "input")
         name_input.click()
         name_input.send_keys(Keys.CONTROL, "a")
@@ -128,7 +132,7 @@ class MyWebDriver:
                 im,
                 basewidth=int(canvas_rect["width"] / gap * zoom),
                 baseheight=int(canvas_rect["height"] / gap * zoom),
-                quantize_color_num=self.color_num
+                quantize_color_num=self.color_num,
             )
             xoffset = int(
                 canvas_rect["x"] + (canvas_rect["width"] - img_width * gap) / 2
