@@ -1,5 +1,6 @@
 from collections import defaultdict
 import tempfile
+from threading import Thread
 import time
 import requests
 from selenium.webdriver.common.keys import Keys
@@ -12,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from PIL import Image
 from draw import draw_by_color, compute_line, process_img
 from datetime import datetime
+from pynput.mouse import Controller
 
 EC_CAN_USER_DRAW = EC.presence_of_element_located(
     (By.CSS_SELECTOR, "#hint > div > button")
@@ -30,7 +32,6 @@ class MyWebDriver:
         self.named_windows = defaultdict()
         self.wait = WebDriverWait(self.driver, timeout=999999)
         self.root = root
-        print(self.driver.get_window_rect())
 
     def set_cur_window_with_name(self, name):
         self.named_windows[name] = self.driver.current_window_handle
@@ -43,7 +44,7 @@ class MyWebDriver:
         self.driver.get(GARTIC_IO_URL)
         self.set_cur_window_with_name("garticio")
         self.set_username()
-        print(self.driver.get_window_rect())
+
         while True:
             self.root.event_generate("<<Waiting>>")
             answer = self.find_answer()
@@ -85,7 +86,7 @@ class MyWebDriver:
         self.suffix = suffix
 
     def save_img_as_tmp(self):
-        self.switch_to_named_window('google_image_search')
+        self.switch_to_named_window("google_image_search")
 
         while True:
             img = self.wait.until(lambda d: d.find_element(By.CLASS_NAME, "KAlRDb"))
@@ -94,7 +95,7 @@ class MyWebDriver:
                 img_data = requests.get(img_src).content
                 tmp = tempfile.TemporaryFile()
                 tmp.write(img_data)
-                self.switch_to_named_window('google_image_search')
+                self.switch_to_named_window("google_image_search")
                 self.driver.close()
                 break
             except:
@@ -107,20 +108,34 @@ class MyWebDriver:
         self.switch_to_named_window("garticio")
         self.wait.until(EC_CAN_USER_DRAW)
 
+        x_gap = 2.5
+        y_gap = 2.5
+        zoom = 0.5
+        canvas_rect = self.compute_canvas_rect()
+
         with Image.open(tmp) as im:
-            w, h = (200, 116)
-            img_arr, size = process_img(im, w, h)
+            img_arr, (img_width, img_height) = process_img(
+                im,
+                basewidth=int(canvas_rect["width"] / x_gap * zoom),
+                baseheight=int(canvas_rect["height"] / y_gap * zoom),
+            )
+            xoffset = int(
+                canvas_rect["x"] + (canvas_rect["width"] - img_width * x_gap) / 2
+            )
+            yoffset = int(
+                canvas_rect["y"] + (canvas_rect["height"] - img_height * y_gap) / 2
+            )
+
             lines = map(compute_line, img_arr)
 
-            img_width = size[0]
-            xoffset = (w - img_width) / 2 * 800 / w + 750
             try:
                 draw_by_color(
                     driver=self.driver,
                     lines=lines,
                     xoffset=xoffset,
-                    yoffset=320,
-                    x_gap=2.5,
+                    yoffset=yoffset,
+                    x_gap=x_gap,
+                    y_gap=y_gap,
                 )
             except:
                 return "interrupt"
@@ -129,3 +144,24 @@ class MyWebDriver:
 
     def close(self):
         self.driver.quit()
+
+    def compute_canvas_rect(self):
+        canvas = self.driver.find_element(By.ID, "drawing")
+        hint = self.driver.find_element(By.ID, "hint")
+        # ref: https://stackoverflow.com/questions/42807676/pythonselenium-on-screen-position-of-element
+        # Assume there is equal amount of browser chrome on the left and right sides of the screen.
+        browser_xoffset = self.driver.execute_script(
+            "return window.screenX + (window.outerWidth - window.innerWidth) / 2 - window.scrollX;"
+        )
+        # Assume all the browser chrome is on the top of the screen and none on the bottom.
+        browser_yoffset = self.driver.execute_script(
+            "return window.screenY + (window.outerHeight - window.innerHeight) - window.scrollY;"
+        )
+        canvas_rect = {
+            "x": canvas.rect["x"] + browser_xoffset,
+            "y": canvas.rect["y"] + browser_yoffset + hint.rect["height"] / 2,
+            "width": canvas.rect["width"],
+            "height": canvas.rect["height"] - hint.rect["height"] / 2,
+        }
+
+        return canvas_rect
