@@ -10,7 +10,7 @@ packages = [{include = "garticio_selenium"}]
 python = ">=3.10,<3.12"
 colormath = "3.0.0"
 numpy = "1.22.4"
-pillow = "9.1.1"
+pillow = "9.3.0"
 pynput = "1.7.6"
 selenium = "4.3.0"
 webdriver-manager = "3.7.0"
