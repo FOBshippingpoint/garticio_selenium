@@ -103,7 +103,7 @@ class MyWebDriver:
         self.switch_to_named_window("google_image_search")
 
         while True:
-            img = self.wait.until(lambda d: d.find_element(By.CLASS_NAME, "KAlRDb"))
+            img = self.wait.until(lambda d: d.find_element(By.XPATH, "/html/body/div[2]/c-wiz/div[3]/div[2]/div[3]/div[2]/div[2]/div[2]/div[2]/c-wiz/div/div/div/div[3]/div[1]/a/img[1]"))
             img_src = img.get_attribute("src")
             try:
                 img_data = requests.get(img_src).content
