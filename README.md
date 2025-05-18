@@ -1,5 +1,7 @@
 # Gartic.io Selenium Printer
 
+## ⚠️This is not working anymore since gartic can detect it and kicks you out the of room⚠️
+
 ![GitHub contributors](https://img.shields.io/github/contributors/FOBshippingpoint/garticio_selenium?style=for-the-badge)
 ![GitHub](https://img.shields.io/github/license/FOBshippingpoint/garticio_selenium?color=blue&style=for-the-badge)
 
